@@ -1,187 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no" />
   <title>Countdown</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Courier New', monospace;
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Courier New', monospace; }
+
+    body{
+      background:#000; color:#0ff; height:100vh; overflow:hidden;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:0 10px;
+      background-image:radial-gradient(circle at 50% 20%, #001f3f, #000);
     }
 
-    body {
-      background-color: #000;
-      color: #0ff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      background-image: radial-gradient(circle at 50% 20%, #001f3f, #000);
-      overflow: hidden;
-      padding: 0 10px;
+    .countdown{
+      font-size:1.4em; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:54px;
+    }
+    .time-box{
+      background:rgba(0,255,255,.10); border:1px solid #0ff; border-radius:12px;
+      padding:10px 14px; box-shadow:0 0 12px #0ff; min-width:75px;
+    }
+    .time-box div{ font-size:1.4em; }
+    .time-box span{ display:block; font-size:.6em; margin-top:4px; color:#aaa; letter-spacing:1px; }
+
+    /* bouncing face */
+    .walter{
+      position:absolute; top:50%; left:50%;
+      width:92px; height:92px; opacity:.26; transform:translate(-50%, -50%);
+      user-select:none; z-index:5; pointer-events:auto; /* allow tap */
+      filter:drop-shadow(0 0 10px rgba(0,255,255,.55));
     }
 
-    h2 {
-      font-size: 1.1em;
-      color: #0ff;
-      margin-bottom: 25px;
-      text-shadow: 0 0 10px #0ff;
+    /* interactive wait message */
+    .wait-wrap{
+      position:absolute; bottom:42px; left:0; right:0; display:flex; justify-content:center;
+    }
+    .wait-btn{
+      appearance:none; border:1px solid #0ff; background:rgba(0,255,255,.08);
+      color:#0ff; padding:8px 14px; border-radius:12px; font-size:.8em; letter-spacing:.5px;
+      box-shadow:0 0 10px rgba(0,255,255,.55); transition:transform .08s ease;
+    }
+    .wait-btn:active{ transform:scale(.98); }
+
+    .hidden-message{
+      margin-top:8px; font-size:.78em; color:#0ff; opacity:.9;
+      border:1px dashed #0ff; border-radius:10px; padding:8px 12px;
+      background:rgba(0,255,255,.06); box-shadow:0 0 10px rgba(0,255,255,.35) inset;
+      max-width:80%; margin-left:auto; margin-right:auto;
+    }
+    .is-hidden{ display:none; }
+
+    /* modal */
+    .modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.6);
+      display:none; align-items:center; justify-content:center; z-index:10;
+    }
+    .modal{
+      background:rgba(0, 20, 30, .95);
+      border:1px solid #0ff; border-radius:16px; padding:18px 16px; width:min(92vw, 420px);
+      box-shadow:0 0 22px #0ff; text-align:left;
+    }
+    .modal h3{ font-size:1em; margin-bottom:8px; text-shadow:0 0 8px #0ff; }
+    .modal p{ font-size:.9em; color:#bff; line-height:1.35; }
+    .modal .close{
+      margin-top:14px; width:100%;
+      appearance:none; border:1px solid #0ff; color:#0ff; background:rgba(0,255,255,.08);
+      padding:8px 12px; border-radius:12px; font-size:.9em; box-shadow:0 0 10px rgba(0,255,255,.55);
+    }
+    .modal-backdrop.show{ display:flex; }
+
+    footer{
+      position:absolute; bottom:10px; width:100%; color:#0ff; font-size:.7em; opacity:.78; text-align:center;
     }
 
-    .countdown {
-      font-size: 1.4em;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      margin-bottom: 50px;
-    }
-
-    .time-box {
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid #0ff;
-      border-radius: 12px;
-      padding: 10px 14px;
-      box-shadow: 0 0 12px #0ff;
-      min-width: 75px;
-    }
-
-    .time-box div {
-      font-size: 1.4em;
-    }
-
-    .time-box span {
-      display: block;
-      font-size: 0.6em;
-      margin-top: 4px;
-      color: #aaa;
-      letter-spacing: 1px;
-    }
-
-    .walter {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 90px;
-      height: 90px;
-      opacity: 0.25;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    footer {
-      position: absolute;
-      bottom: 10px;
-      color: #0ff;
-      font-size: 0.7em;
-      opacity: 0.7;
-      text-align: center;
-      width: 100%;
-    }
-
-    .hidden-message {
-      position: absolute;
-      bottom: 35px;
-      right: 0;
-      left: 0;
-      text-align: center;
-      color: #0ff;
-      font-size: 0.75em;
-      opacity: 0.8;
-    }
-
-    @media (min-width: 481px) {
-      body::before {
-        content: "Mobile only 🌀";
-        color: #0ff;
-      }
-      .countdown, .walter, .hidden-message, footer {
-        display: none;
-      }
+    /* mobile-only guard */
+    @media (min-width: 481px){
+      body::before{ content:"Mobile only 🌀"; color:#0ff; }
+      .countdown, .walter, .wait-wrap, footer{ display:none; }
     }
   </style>
 </head>
 <body>
 
-  <h2>This is not the secret message. Hint: Fer..Ci.. something happens on November 15.</h2>
-
   <div class="countdown" id="countdown">
-    <div class="time-box">
-      <div id="days">00</div>
-      <span>Days</span>
-    </div>
-    <div class="time-box">
-      <div id="hours">00</div>
-      <span>Hours</span>
-    </div>
-    <div class="time-box">
-      <div id="minutes">00</div>
-      <span>Minutes</span>
-    </div>
-    <div class="time-box">
-      <div id="seconds">00</div>
-      <span>Seconds</span>
+    <div class="time-box"><div id="days">00</div><span>Days</span></div>
+    <div class="time-box"><div id="hours">00</div><span>Hours</span></div>
+    <div class="time-box"><div id="minutes">00</div><span>Minutes</span></div>
+    <div class="time-box"><div id="seconds">00</div><span>Seconds</span></div>
+  </div>
+
+  <!-- Bouncing face -->
+  <img src="img3.png" alt="face" class="walter" id="walter" />
+
+  <!-- Interactive wait message -->
+  <div class="wait-wrap">
+    <div>
+      <button id="waitBtn" class="wait-btn" aria-expanded="false">Tap to reveal the wait message</button>
+      <div id="waitBox" class="hidden-message is-hidden">wait until 05/01/2026 at 5:00 PM</div>
     </div>
   </div>
 
-  <img src="img3.png" class="walter" id="walter">
-
-  <div class="hidden-message">wait until 05/01/2026 at 5:00 PM</div>
+  <!-- Modal for hint (appears after tapping the face) -->
+  <div id="hintModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="hintTitle">
+    <div class="modal">
+      <h3 id="hintTitle">This is not the secret message.</h3>
+      <p id="hintBody">Hint: Fer..Ci.. something happens on November 15.</p>
+      <button class="close" id="closeModal">OK</button>
+    </div>
+  </div>
 
   <footer>
     Colegio Pío XII • 100% Franciscan • Cambridge School
   </footer>
 
   <script>
-    // Countdown
+    // === Countdown ===
     const eventDate = new Date("2026-05-01T17:00:00").getTime();
-    const countdown = setInterval(() => {
-      const now = new Date().getTime();
+    const tick = setInterval(() => {
+      const now = Date.now();
       const distance = eventDate - now;
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById('days').innerText = days.toString().padStart(2, '0');
-      document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
-      document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
-      document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+      const d = Math.max(0, Math.floor(distance / (1000 * 60 * 60 * 24)));
+      const h = Math.max(0, Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+      const m = Math.max(0, Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
+      const s = Math.max(0, Math.floor((distance % (1000 * 60)) / 1000));
 
-      if (distance < 0) {
-        clearInterval(countdown);
+      document.getElementById('days').textContent = d.toString().padStart(2,'0');
+      document.getElementById('hours').textContent = h.toString().padStart(2,'0');
+      document.getElementById('minutes').textContent = m.toString().padStart(2,'0');
+      document.getElementById('seconds').textContent = s.toString().padStart(2,'0');
+
+      if (distance <= 0){
+        clearInterval(tick);
         document.getElementById('countdown').innerHTML = '<h2>THE TIME HAS COME</h2>';
       }
     }, 1000);
 
-    // Walter White bouncing animation
+    // === Bouncing animation ===
     const walter = document.getElementById('walter');
-    let x = window.innerWidth / 2;
-    let y = window.innerHeight / 2;
-    let dx = 2;
-    let dy = 2;
+    let x = innerWidth / 2, y = innerHeight / 2, dx = 2.1, dy = 2.1;
+    const half = 46; // half of image size (92px)
 
-    function animate() {
-      x += dx;
-      y += dy;
-
-      if (x + 45 > window.innerWidth || x - 45 < 0) dx *= -1;
-      if (y + 45 > window.innerHeight || y - 45 < 0) dy *= -1;
-
+    function animate(){
+      x += dx; y += dy;
+      if (x + half > innerWidth || x - half < 0) dx *= -1;
+      if (y + half > innerHeight || y - half < 0) dy *= -1;
       walter.style.left = x + 'px';
-      walter.style.top = y + 'px';
-
+      walter.style.top  = y + 'px';
       requestAnimationFrame(animate);
     }
-
     animate();
-  </script>
 
+    // === Hint modal triggers on tap of the face ===
+    const hintModal = document.getElementById('hintModal');
+    const closeModal = document.getElementById('closeModal');
+    const openHint = () => hintModal.classList.add('show');
+    const closeHint = () => hintModal.classList.remove('show');
+
+    walter.addEventListener('click', openHint);
+    walter.addEventListener('touchstart', (e)=>{ e.preventDefault(); openHint(); }, {passive:false});
+    closeModal.addEventListener('click', closeHint);
+    hintModal.addEventListener('click', (e)=>{ if(e.target === hintModal) closeHint(); });
+
+    // === Interactive wait message ===
+    const waitBtn = document.getElementById('waitBtn');
+    const waitBox = document.getElementById('waitBox');
+    waitBtn.addEventListener('click', ()=>{
+      const open = waitBtn.getAttribute('aria-expanded') === 'true';
+      waitBtn.setAttribute('aria-expanded', String(!open));
+      waitBtn.textContent = open ? 'Tap to reveal the wait message' : 'Hide wait message';
+      waitBox.classList.toggle('is-hidden');
+    });
+
+    // keep inside bounds on resize
+    addEventListener('resize', ()=>{
+      x = Math.min(Math.max(x, half), innerWidth - half);
+      y = Math.min(Math.max(y, half), innerHeight - half);
+    });
+  </script>
 </body>
 </html>
