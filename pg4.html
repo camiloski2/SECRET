@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+
+    body {
+      background-color: #000;
+      color: #0ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background-image: radial-gradient(circle at 50% 20%, #001f3f, #000);
+      overflow: hidden;
+    }
+
+    .countdown {
+      font-size: 2em;
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+    }
+
+    .time-box {
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid #0ff;
+      border-radius: 10px;
+      padding: 15px 25px;
+      box-shadow: 0 0 15px #0ff;
+    }
+
+    .time-box span {
+      display: block;
+      font-size: 0.6em;
+      margin-top: 5px;
+      color: #aaa;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      color: #0ff;
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
+
+    /* Mensaje oculto */
+    .hidden-message {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      color: rgba(255, 255, 255, 0);
+      font-size: 0.8em;
+      transition: color 0.3s ease;
+      cursor: default;
+    }
+
+    .hidden-message:hover {
+      color: #0ff;
+      text-shadow: 0 0 8px #0ff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="countdown" id="countdown">
+    <div class="time-box">
+      <div id="days">00</div>
+      <span>Days</span>
+    </div>
+    <div class="time-box">
+      <div id="hours">00</div>
+      <span>Hours</span>
+    </div>
+    <div class="time-box">
+      <div id="minutes">00</div>
+      <span>Minutes</span>
+    </div>
+    <div class="time-box">
+      <div id="seconds">00</div>
+      <span>Seconds</span>
+    </div>
+  </div>
+
+  <div class="hidden-message">wait until 11/30/2025</div>
+
+  <footer>
+    Colegio Pío XII • 100% Franciscano
+  </footer>
+
+  <script>
+    // 🔧 Cambia aquí la fecha objetivo
+    const eventDate = new Date("2025-11-30T08:00:00").getTime();
+
+    const countdown = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').innerText = days.toString().padStart(2, '0');
+      document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+
+      if (distance < 0) {
+        clearInterval(countdown);
+        document.getElementById('countdown').innerHTML = '<h2>THE TIME HAS COME</h2>';
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
