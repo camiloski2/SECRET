@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Countdown</title>
   <style>
     * {
@@ -23,45 +23,55 @@
       text-align: center;
       background-image: radial-gradient(circle at 50% 20%, #001f3f, #000);
       overflow: hidden;
+      padding: 0 10px;
     }
 
     .countdown {
-      font-size: 2em;
+      font-size: 1.6em;
       display: flex;
-      gap: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
       justify-content: center;
     }
 
     .time-box {
       background: rgba(0, 255, 255, 0.1);
       border: 1px solid #0ff;
-      border-radius: 10px;
-      padding: 15px 25px;
-      box-shadow: 0 0 15px #0ff;
+      border-radius: 12px;
+      padding: 12px 18px;
+      box-shadow: 0 0 12px #0ff;
+      min-width: 80px;
+    }
+
+    .time-box div {
+      font-size: 1.5em;
     }
 
     .time-box span {
       display: block;
       font-size: 0.6em;
-      margin-top: 5px;
+      margin-top: 4px;
       color: #aaa;
+      letter-spacing: 1px;
     }
 
     footer {
       position: absolute;
-      bottom: 20px;
+      bottom: 15px;
       color: #0ff;
-      font-size: 0.9em;
+      font-size: 0.8em;
       opacity: 0.7;
+      text-align: center;
+      width: 100%;
     }
 
-    /* Mensaje oculto */
+    /* Hidden message */
     .hidden-message {
       position: absolute;
-      bottom: 10px;
-      right: 15px;
+      bottom: 5px;
+      right: 10px;
       color: rgba(255, 255, 255, 0);
-      font-size: 0.8em;
+      font-size: 0.75em;
       transition: color 0.3s ease;
       cursor: default;
     }
@@ -69,6 +79,22 @@
     .hidden-message:hover {
       color: #0ff;
       text-shadow: 0 0 8px #0ff;
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 480px) {
+      .countdown {
+        font-size: 1.4em;
+        gap: 12px;
+      }
+
+      .time-box {
+        padding: 10px 14px;
+      }
+
+      footer {
+        font-size: 0.7em;
+      }
     }
   </style>
 </head>
@@ -93,15 +119,15 @@
     </div>
   </div>
 
-  <div class="hidden-message">wait until 11/30/2025</div>
+  <div class="hidden-message">wait until 05/01/2026 at 5:00 PM</div>
 
   <footer>
-    Colegio Pío XII • 100% Franciscano
+    Colegio Pío XII • 100% Franciscan
   </footer>
 
   <script>
-    // 🔧 Cambia aquí la fecha objetivo
-    const eventDate = new Date("2025-11-30T08:00:00").getTime();
+    // 🎯 Target date: May 1, 2026 at 5:00 PM
+    const eventDate = new Date("2026-05-01T17:00:00").getTime();
 
     const countdown = setInterval(() => {
       const now = new Date().getTime();
