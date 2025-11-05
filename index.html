@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no">
   <title>Countdown</title>
   <style>
     * {
@@ -26,25 +26,33 @@
       padding: 0 10px;
     }
 
+    h2 {
+      font-size: 1.1em;
+      color: #0ff;
+      margin-bottom: 25px;
+      text-shadow: 0 0 10px #0ff;
+    }
+
     .countdown {
-      font-size: 1.6em;
+      font-size: 1.4em;
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 12px;
       justify-content: center;
+      margin-bottom: 50px;
     }
 
     .time-box {
       background: rgba(0, 255, 255, 0.1);
       border: 1px solid #0ff;
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 10px 14px;
       box-shadow: 0 0 12px #0ff;
-      min-width: 80px;
+      min-width: 75px;
     }
 
     .time-box div {
-      font-size: 1.5em;
+      font-size: 1.4em;
     }
 
     .time-box span {
@@ -55,50 +63,53 @@
       letter-spacing: 1px;
     }
 
+    .walter {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 90px;
+      height: 90px;
+      opacity: 0.25;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      user-select: none;
+    }
+
     footer {
       position: absolute;
-      bottom: 15px;
+      bottom: 10px;
       color: #0ff;
-      font-size: 0.8em;
+      font-size: 0.7em;
       opacity: 0.7;
       text-align: center;
       width: 100%;
     }
 
-    /* Hidden message */
     .hidden-message {
       position: absolute;
-      bottom: 5px;
-      right: 10px;
-      color: rgba(255, 255, 255, 0);
-      font-size: 0.75em;
-      transition: color 0.3s ease;
-      cursor: default;
-    }
-
-    .hidden-message:hover {
+      bottom: 35px;
+      right: 0;
+      left: 0;
+      text-align: center;
       color: #0ff;
-      text-shadow: 0 0 8px #0ff;
+      font-size: 0.75em;
+      opacity: 0.8;
     }
 
-    /* Mobile optimization */
-    @media (max-width: 480px) {
-      .countdown {
-        font-size: 1.4em;
-        gap: 12px;
+    @media (min-width: 481px) {
+      body::before {
+        content: "Mobile only 🌀";
+        color: #0ff;
       }
-
-      .time-box {
-        padding: 10px 14px;
-      }
-
-      footer {
-        font-size: 0.7em;
+      .countdown, .walter, .hidden-message, footer {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
+
+  <h2>This is not the secret message. Hint: Fer..Ci.. something happens on November 15.</h2>
 
   <div class="countdown" id="countdown">
     <div class="time-box">
@@ -119,20 +130,20 @@
     </div>
   </div>
 
+  <img src="img3.png" class="walter" id="walter">
+
   <div class="hidden-message">wait until 05/01/2026 at 5:00 PM</div>
 
   <footer>
-    Colegio Pío XII • 100% Franciscan
+    Colegio Pío XII • 100% Franciscan • Cambridge School
   </footer>
 
   <script>
-    // 🎯 Target date: May 1, 2026 at 5:00 PM
+    // Countdown
     const eventDate = new Date("2026-05-01T17:00:00").getTime();
-
     const countdown = setInterval(() => {
       const now = new Date().getTime();
       const distance = eventDate - now;
-
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -148,6 +159,29 @@
         document.getElementById('countdown').innerHTML = '<h2>THE TIME HAS COME</h2>';
       }
     }, 1000);
+
+    // Walter White bouncing animation
+    const walter = document.getElementById('walter');
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+    let dx = 2;
+    let dy = 2;
+
+    function animate() {
+      x += dx;
+      y += dy;
+
+      if (x + 45 > window.innerWidth || x - 45 < 0) dx *= -1;
+      if (y + 45 > window.innerHeight || y - 45 < 0) dy *= -1;
+
+      walter.style.left = x + 'px';
+      walter.style.top = y + 'px';
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
   </script>
+
 </body>
 </html>
